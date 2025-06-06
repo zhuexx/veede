@@ -30,6 +30,10 @@
       cursor: pointer;
       background: #007acc;
       border: none;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005f99;
     }
     #status {
       color: #aaa;
@@ -51,7 +55,6 @@
       color: #7289da;
       vertical-align: middle;
     }
-    /* Buttons container styling */
     .buttons-container {
       display: flex;
       max-width: 600px;
@@ -62,14 +65,20 @@
     .buttons-container button {
       flex: 1;
     }
+    .alt-obfuscate {
+      background: #28a745;
+    }
+    .alt-obfuscate:hover {
+      background-color: #1e7e34;
+    }
   </style>
 </head>
 <body>
   <h2>Raw link Converter</h2>
   <input id="inputText" placeholder="Enter URL or code here" />
   <div class="buttons-container">
-    <button onclick="obfuscate()">Obfuscate</button>
-    <button onclick="obfuscate()">Obfuscate (Alt)</button>
+    <button onclick="obfuscate()">Obfuscate (Decimal)</button>
+    <button class="alt-obfuscate" onclick="obfuscateHex()">Obfuscate (Hex)</button>
   </div>
   <div id="status"></div>
   <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  
@@ -78,8 +87,17 @@
     <span>@.kyrosc(xueey)</span>
   </div>  
   <script>
+    // Original decimal escape obfuscation
     function escapeToAscii(str) {
       return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
+    }
+
+    // New hex escape obfuscation
+    function escapeToHex(str) {
+      return str.split('').map(char => {
+        const hex = char.charCodeAt(0).toString(16).padStart(2, '0');
+        return "\\x" + hex;
+      }).join('');
     }
 
     function obfuscate() {
@@ -91,6 +109,27 @@
 
       setTimeout(() => {
         const escaped = escapeToAscii(input);
+        const result = `local a = getfenv and getfenv() or _ENV\n` +
+          `local b = a[\"loadstring\"]\n` +
+          `local c = a[\"game\"][\"HttpGet\"]\n` +
+          `local d = a[\"game\"]\n\n` +
+          `local u = \"${escaped}\"\n\n` +
+          `b(c(d, u))()`;
+
+        output.value = result;
+        status.textContent = "Done.";
+      }, 300);
+    }
+
+    function obfuscateHex() {
+      const input = document.getElementById('inputText').value.trim();
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
+      output.value = "";
+      status.textContent = "Processing...";
+
+      setTimeout(() => {
+        const escaped = escapeToHex(input);
         const result = `local a = getfenv and getfenv() or _ENV\n` +
           `local b = a[\"loadstring\"]\n` +
           `local c = a[\"game\"][\"HttpGet\"]\n` +

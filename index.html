@@ -51,7 +51,7 @@
       color: #7289da;
       vertical-align: middle;
     }
-    /* New styles for buttons container */
+    /* Buttons container styling */
     .buttons-container {
       display: flex;
       max-width: 600px;
@@ -62,9 +62,6 @@
     .buttons-container button {
       flex: 1;
     }
-    .go-second-page {
-      background: #28a745;
-    }
   </style>
 </head>
 <body>
@@ -72,7 +69,7 @@
   <input id="inputText" placeholder="Enter URL or code here" />
   <div class="buttons-container">
     <button onclick="obfuscate()">Obfuscate</button>
-    <button class="go-second-page" onclick="location.href='page2.html'">Go to Second Page</button>
+    <button onclick="obfuscate()">Obfuscate (Alt)</button>
   </div>
   <div id="status"></div>
   <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  

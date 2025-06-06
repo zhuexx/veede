@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Converter</title>
+  <title>Lua Obfuscator</title>
   <style>
     body {
       font-family: monospace;
@@ -14,7 +14,7 @@
       align-items: center;
       padding: 2rem;
     }
-    textarea, input, button {
+    input, textarea, button {
       font-family: monospace;
       font-size: 1rem;
       margin: 0.5rem 0;
@@ -27,91 +27,53 @@
       border-radius: 4px;
     }
     button {
-      cursor: pointer;
-      background: #007acc;
+      background-color: #007acc;
       border: none;
-      transition: background-color 0.3s ease;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
     button:hover {
       background-color: #005f99;
     }
     #status {
-      color: #aaa;
-      margin-bottom: 1rem;
+      margin-top: 0.5rem;
       height: 1.2rem;
-    }
-    .footer {
-      margin-top: 2rem;
-      text-align: center;
-    }
-    .footer img {
-      width: 24px;
-      vertical-align: middle;
-      margin-right: 8px;
-      filter: brightness(0) saturate(100%) invert(27%) sepia(74%) saturate(3629%) hue-rotate(211deg) brightness(91%) contrast(90%);
-    }
-    .footer span {
-      font-size: 1rem;
-      color: #7289da;
-      vertical-align: middle;
-    }
-    .buttons-container {
-      display: flex;
-      max-width: 600px;
-      width: 100%;
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-    .buttons-container button {
-      flex: 1;
-    }
-    .convert-button {
-      background: #d47a07;
-    }
-    .convert-button:hover {
-      background-color: #a35c05;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
-  <h2>Converter</h2>
-  <input id="inputText" placeholder='Enter like: loadstring(game:HttpGet("URL"))()' />
-  <div class="buttons-container">
-    <button class="convert-button" onclick="convertLoadstring()">Loadstring Converter</button>
-  </div>
+  <h2>Lua HttpGet Obfuscator</h2>
+  <input id="inputText" placeholder='Enter: loadstring(game:HttpGet("RAWLINK"))()' />
+  <button onclick="convert()">Convert</button>
   <div id="status"></div>
-  <textarea id="output" rows="16" readonly placeholder="Converted script will appear here..."></textarea>
-  <div class="footer">
-    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" />
-    <span>@.kyrosc(xueey)</span>
-  </div>
+  <textarea id="output" rows="16" readonly placeholder="Converted Lua script will appear here..."></textarea>
+
   <script>
-    // Converts a string into ASCII escaped codes like \104\116\116...
     function escapeToAscii(str) {
-      return str.split('').map(char => '\\' + char.charCodeAt(0)).join('');
+      return str.split('').map(c => '\\' + c.charCodeAt(0)).join('');
     }
 
-    function convertLoadstring() {
-      const input = document.getElementById('inputText').value.trim();
-      const status = document.getElementById('status');
-      const output = document.getElementById('output');
+    function convert() {
+      const input = document.getElementById("inputText").value.trim();
+      const output = document.getElementById("output");
+      const status = document.getElementById("status");
+
       output.value = "";
-      
-      // Regex to extract the URL inside loadstring(game:HttpGet("..."))()
+      status.textContent = "";
+
       const regex = /^loadstring\s*\s*game\s*:\s*HttpGet\s*\s*["'](.+?)["']\s*\s*\s*\s*$/i;
       const match = input.match(regex);
-      
+
       if (!match) {
-        status.textContent = "Input must be exactly like loadstring(game:HttpGet(\"URL\"))()";
+        status.textContent = "❌ Invalid format. Use: loadstring(game:HttpGet(\"URL\"))()";
         return;
       }
 
       const url = match[1];
-      status.textContent = "Processing...";
+      const escaped = escapeToAscii(url);
 
-      setTimeout(() => {
-        const escapedUrl = escapeToAscii(url);
-        const result = 
+      const luaCode = 
 `local a = getfenv and getfenv() or _ENV
 local b = a["loadstring"]
 local c = a["game"]["HttpGet"]
@@ -120,18 +82,17 @@ local d = a["game"]
 local function e(str)
     local f = {}
     for g in str:gmatch(".") do
-        table.insert(f, "\\" .. string.byte(g))
+        table.insert(f, "\\\\" .. string.byte(g))
     end
     return loadstring(game:HttpGet(loadstring("return \\"" .. table.concat(f) .. "\\"")()))
 end
 
-local u = "${escapedUrl}"
+local u = "${escaped}"
 
 b(c(d, u))()`;
 
-        output.value = result;
-        status.textContent = "Done.";
-      }, 200);
+      output.value = luaCode;
+      status.textContent = "✅ Converted successfully.";
     }
   </script>
 </body>

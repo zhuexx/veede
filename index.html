@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lua Obfuscator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Converter</title>
   <style>
     body {
       font-family: monospace;
@@ -14,7 +14,7 @@
       align-items: center;
       padding: 2rem;
     }
-    input, textarea, button {
+    textarea, input, button {
       font-family: monospace;
       font-size: 1rem;
       margin: 0.5rem 0;
@@ -27,72 +27,140 @@
       border-radius: 4px;
     }
     button {
-      background-color: #007acc;
-      border: none;
       cursor: pointer;
-      transition: background 0.3s ease;
+      background: #007acc;
+      border: none;
+      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #005f99;
     }
     #status {
-      margin-top: 0.5rem;
-      height: 1.2rem;
       color: #aaa;
+      margin-bottom: 1rem;
+      height: 1.2rem;
+    }
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .footer img {
+      width: 24px;
+      vertical-align: middle;
+      margin-right: 8px;
+      filter: brightness(0) saturate(100%) invert(27%) sepia(74%) saturate(3629%) hue-rotate(211deg) brightness(91%) contrast(90%);
+    }
+    .footer span {
+      font-size: 1rem;
+      color: #7289da;
+      vertical-align: middle;
+    }
+    .buttons-container {
+      display: flex;
+      max-width: 600px;
+      width: 100%;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .buttons-container button {
+      flex: 1;
+    }
+    .alt-obfuscate {
+      background: #28a745;
+    }
+    .alt-obfuscate:hover {
+      background-color: #1e7e34;
     }
   </style>
 </head>
 <body>
-  <h2>Lua HttpGet Obfuscator</h2>
-  <input id="inputText" placeholder='Enter: loadstring(game:HttpGet("RAWLINK"))()' />
-  <button onclick="convert()">Convert</button>
+  <h2>Converter</h2>
+  <input id="inputText" placeholder="Enter URL or code here" />
+  <div class="buttons-container">
+    <button onclick="obfuscate()">Loadstring Function</button>
+    <button class="alt-obfuscate" onclick="base64Obfuscate()">Obfuscate (Base64 Lua)</button>
+  </div>
   <div id="status"></div>
-  <textarea id="output" rows="16" readonly placeholder="Converted Lua script will appear here..."></textarea>
-
+  <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  
+  <div class="footer">
+    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" />
+    <span>@.kyrosc(xueey)</span>
+  </div>  
   <script>
     function escapeToAscii(str) {
-      return str.split('').map(c => '\\' + c.charCodeAt(0)).join('');
+      return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
     }
 
-    function convert() {
-      const input = document.getElementById("inputText").value.trim();
-      const output = document.getElementById("output");
-      const status = document.getElementById("status");
-
+    function obfuscate() {
+      const input = document.getElementById('inputText').value.trim();
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
       output.value = "";
-      status.textContent = "";
+      status.textContent = "Processing...";
 
-      const regex = /^loadstring\s*\s*game\s*:\s*HttpGet\s*\s*["'](.+?)["']\s*\s*\s*\s*$/i;
-      const match = input.match(regex);
+      setTimeout(() => {
+        const escaped = escapeToAscii(input);
+        const result = `local a = getfenv and getfenv() or _ENV\n` +
+          `local b = a[\"loadstring\"]\n` +
+          `local c = a[\"game\"][\"HttpGet\"]\n` +
+          `local d = a[\"game\"]\n\n` +
+          `local u = \"${escaped}\"\n\n` +
+          `b(c(d, u))()`;
 
-      if (!match) {
-        status.textContent = "❌ Invalid format. Use: loadstring(game:HttpGet(\"URL\"))()";
-        return;
-      }
+        output.value = result;
+        status.textContent = "Done.";
+      }, 300);
+    }
 
-      const url = match[1];
-      const escaped = escapeToAscii(url);
+    // Base64 encode helper for JavaScript (safe for unicode)
+    function base64EncodeUnicode(str) {
+      // encodeURIComponent + unescape to handle unicode properly
+      return btoa(unescape(encodeURIComponent(str)));
+    }
 
-      const luaCode = 
-`local a = getfenv and getfenv() or _ENV
-local b = a["loadstring"]
-local c = a["game"]["HttpGet"]
-local d = a["game"]
+    function base64Obfuscate() {
+      const input = document.getElementById('inputText').value;
+      const status = document.getElementById('status');
+      const output = document.getElementById('output');
+      output.value = "";
+      status.textContent = "Processing...";
 
-local function e(str)
-    local f = {}
-    for g in str:gmatch(".") do
-        table.insert(f, "\\\\" .. string.byte(g))
-    end
-    return loadstring(game:HttpGet(loadstring("return \\"" .. table.concat(f) .. "\\"")()))
+      setTimeout(() => {
+        const b64 = base64EncodeUnicode(input);
+
+        // Lua base64 decode function for Roblox adapted from common implementations
+        // This function decodes a base64 string in Lua
+        const luaBase64DecodeFunction = `
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+local function decodeBase64(data)
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r=r..(f%2^i - f%2^(i-1) > 0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d%d%d%d%d%d', function(x)
+        local c=0
+        for i=1,8 do c=c + (x:sub(i,i) == '1' and 2^(8-i) or 0) end
+        return string.char(c)
+    end))
 end
+`;
 
-local u = "${escaped}"
+        // Construct the full Lua script with base64 decode and execution
+        const luaScript = `${luaBase64DecodeFunction}
 
-b(c(d, u))()`;
+local b64string = "${b64}"
 
-      output.value = luaCode;
-      status.textContent = "✅ Converted successfully.";
+local decoded = decodeBase64(b64string)
+
+local f = loadstring or load
+f(decoded)()
+`;
+
+        output.value = luaScript.trim();
+        status.textContent = "Done.";
+      }, 300);
     }
   </script>
 </body>

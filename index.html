@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -50,17 +51,36 @@
       color: #7289da;
       vertical-align: middle;
     }
+    /* New styles for buttons container */
+    .buttons-container {
+      display: flex;
+      max-width: 600px;
+      width: 100%;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+    .buttons-container button {
+      flex: 1;
+    }
+    .go-second-page {
+      background: #28a745;
+    }
   </style>
 </head>
 <body>
   <h2>Raw link Converter</h2>
   <input id="inputText" placeholder="Enter URL or code here" />
-  <button onclick="obfuscate()">Obfuscate</button>
+  <div class="buttons-container">
+    <button onclick="obfuscate()">Obfuscate</button>
+    <button class="go-second-page" onclick="location.href='page2.html'">Go to Second Page</button>
+  </div>
   <div id="status"></div>
-  <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  <div class="footer">
+  <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  
+  <div class="footer">
     <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" />
     <span>@.kyrosc(xueey)</span>
-  </div>  <script>
+  </div>  
+  <script>
     function escapeToAscii(str) {
       return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
     }
@@ -85,5 +105,6 @@
         status.textContent = "Done.";
       }, 300);
     }
-  </script></body>
+  </script>
+</body>
 </html>

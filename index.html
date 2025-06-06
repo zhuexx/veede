@@ -77,8 +77,8 @@
   <h2>Raw link Converter</h2>
   <input id="inputText" placeholder="Enter URL or code here" />
   <div class="buttons-container">
-    <button onclick="obfuscate()">Obfuscate (Decimal)</button>
-    <button class="alt-obfuscate" onclick="obfuscateHex()">Obfuscate (Hex)</button>
+    <button onclick="obfuscate()">Obfuscate (Lua)</button>
+    <button class="alt-obfuscate" onclick="simpleObfuscate()">Obfuscate (Base64)</button>
   </div>
   <div id="status"></div>
   <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  
@@ -87,17 +87,8 @@
     <span>@.kyrosc(xueey)</span>
   </div>  
   <script>
-    // Original decimal escape obfuscation
     function escapeToAscii(str) {
       return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
-    }
-
-    // New hex escape obfuscation
-    function escapeToHex(str) {
-      return str.split('').map(char => {
-        const hex = char.charCodeAt(0).toString(16).padStart(2, '0');
-        return "\\x" + hex;
-      }).join('');
     }
 
     function obfuscate() {
@@ -121,23 +112,20 @@
       }, 300);
     }
 
-    function obfuscateHex() {
-      const input = document.getElementById('inputText').value.trim();
+    // New simple obfuscation - base64 encode the input, no Lua code wrapper
+    function simpleObfuscate() {
+      const input = document.getElementById('inputText').value;
       const status = document.getElementById('status');
       const output = document.getElementById('output');
       output.value = "";
       status.textContent = "Processing...";
 
       setTimeout(() => {
-        const escaped = escapeToHex(input);
-        const result = `local a = getfenv and getfenv() or _ENV\n` +
-          `local b = a[\"loadstring\"]\n` +
-          `local c = a[\"game\"][\"HttpGet\"]\n` +
-          `local d = a[\"game\"]\n\n` +
-          `local u = \"${escaped}\"\n\n` +
-          `b(c(d, u))()`;
+        // Base64 encode
+        // Handle Unicode safely:
+        const encoded = btoa(unescape(encodeURIComponent(input)));
 
-        output.value = result;
+        output.value = encoded;
         status.textContent = "Done.";
       }, 300);
     }

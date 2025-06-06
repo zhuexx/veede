@@ -1,0 +1,17 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Lua Loadstring Obfuscator</title>
+<style>body{font-family:monospace;background:#1e1e1e;color:#dcdcdc;display:flex;flex-direction:column;align-items:center;padding:2rem}button,input,textarea{font-family:monospace;font-size:1rem;margin:.5rem 0;width:100%;max-width:600px;background:#2e2e2e;color:#fff;border:1px solid #555;padding:.5rem;border-radius:4px}button{cursor:pointer;background:#007acc;border:none}#status{color:#aaa;margin-bottom:1rem;height:1.2rem}.footer{margin-top:2rem;text-align:center}.footer img{width:24px;vertical-align:middle;margin-right:8px;filter:brightness(0) saturate(100%) invert(27%) sepia(74%) saturate(3629%) hue-rotate(211deg) brightness(91%) contrast(90%)}.footer span{font-size:1rem;color:#7289da;vertical-align:middle}</style>
+</head>
+<body>
+<h2>Lua Loadstring Obfuscator</h2>
+<input id=inputText placeholder="Enter URL or code here">
+<button onclick=obfuscate()>Obfuscate</button>
+<div id=status></div>
+<textarea id=output rows=12 readonly placeholder="Obfuscated code will appear here..."></textarea> <div class=footer>
+<img src=https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg alt=Discord>
+<span>@.kyrosc</span>
+</div> <script>function escapeToAscii(t){return t.split("").map((t=>"\\"+t.charCodeAt(0))).join("")}function obfuscate(){const t=document.getElementById("inputText").value.trim(),e=document.getElementById("status"),n=document.getElementById("output");n.value="",e.textContent="Processing...",setTimeout((()=>{const o=`local a = getfenv and getfenv() or _ENV\nlocal b = a["loadstring"]\nlocal c = a["game"]["HttpGet"]\nlocal d = a["game"]\n\nlocal u = "${escapeToAscii(t)}"\n\nb(c(d, u))()`;n.value=o,e.textContent="Done."}),500)}</script></body>
+</html>

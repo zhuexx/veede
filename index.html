@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code Converter Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>Converter</h2>
+  <input id="inputText" placeholder="Enter paste.ee or code here" />
+  <div class="buttons-container">
+    <button onclick="obfuscate()">Loadstring Function</button>
+    <button class="alt-obfuscate" onclick="base64Obfuscate()">Obfuscate (Base64 Lua)</button>
+  </div>
+  <div id="status"></div>
+  <textarea id="output" rows="12" readonly placeholder="Obfuscated code will appear here..."></textarea>  
+  <div class="footer">
+    <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg" alt="Discord" />
+    <span>@.kyrosc(xueey)</span>
+  </div>  
+  <script src="script.js"></script>
+</body>
+</html>

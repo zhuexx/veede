@@ -1,0 +1,169 @@
+/* Modern CSS Reset */
+:root {
+    --primary: #007acc;
+    --primary-light: #3a9bdc;
+    --primary-dark: #005f99;
+    --secondary: #28a745;
+    --secondary-dark: #1e7e34;
+    --dark: #1e1e1e;
+    --darker: #121212;
+    --light: #2e2e2e;
+    --lighter: #3e3e3e;
+    --text: #dcdcdc;
+    --text-light: #aaa;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace, sans-serif;
+    line-height: 1.6;
+    color: var(--text);
+    background-color: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+/* Input and Textarea Styles */
+input, textarea, button {
+    font-family: monospace;
+    font-size: 1rem;
+    margin: 0.5rem 0;
+    width: 100%;
+    max-width: 600px;
+    background: var(--light);
+    color: var(--text);
+    border: 1px solid #555;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 122, 204, 0.2);
+}
+
+textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+/* Button Styles */
+button {
+    cursor: pointer;
+    background: var(--primary);
+    border: none;
+    color: white;
+    font-weight: 500;
+    padding: 0.8rem;
+    transition: var(--transition);
+}
+
+button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.alt-obfuscate {
+    background: var(--secondary);
+}
+
+.alt-obfuscate:hover {
+    background-color: var(--secondary-dark);
+}
+
+/* Status Message */
+#status {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    height: 1.2rem;
+    font-size: 0.9rem;
+}
+
+/* Buttons Container */
+.buttons-container {
+    display: flex;
+    max-width: 600px;
+    width: 100%;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.buttons-container button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Footer */
+.footer {
+    margin-top: 2rem;
+    text-align: center;
+    color: var(--text-light);
+}
+
+.footer img {
+    width: 24px;
+    vertical-align: middle;
+    margin-right: 8px;
+    filter: brightness(0) saturate(100%) invert(27%) sepia(74%) saturate(3629%) hue-rotate(211deg) brightness(91%) contrast(90%);
+    transition: var(--transition);
+}
+
+.footer img:hover {
+    transform: translateY(-2px);
+}
+
+.footer span {
+    font-size: 1rem;
+    color: #7289da;
+    vertical-align: middle;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    body {
+        padding: 1.5rem;
+    }
+    
+    .buttons-container {
+        flex-direction: column;
+    }
+    
+    input, textarea, button {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 1rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .footer {
+        font-size: 0.9rem;
+    }
+  }

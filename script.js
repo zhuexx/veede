@@ -1,43 +1,59 @@
 function escapeToAscii(str) {
-  return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
+    return str.split('').map(char => "\\" + char.charCodeAt(0)).join('');
 }
 
 function obfuscate() {
-  const input = document.getElementById('inputText').value.trim();
-  const status = document.getElementById('status');
-  const output = document.getElementById('output');
-  output.value = "";
-  status.textContent = "Processing...";
+    const input = document.getElementById('inputText').value.trim();
+    const status = document.getElementById('status');
+    const output = document.getElementById('output');
+    output.value = "";
+    status.textContent = "Processing...";
 
-  setTimeout(() => {
-    const escaped = escapeToAscii(input);
-    const result = `local a = getfenv and getfenv() or _ENV\n` +
-      `local b = a[\"loadstring\"]\n` +
-      `local c = a[\"game\"][\"HttpGet\"]\n` +
-      `local d = a[\"game\"]\n\n` +
-      `local u = \"${escaped}\"\n\n` +
-      `b(c(d, u))()`;
+    setTimeout(() => {
+        if (!input) {
+            status.textContent = "Error: No input provided";
+            return;
+        }
 
-    output.value = result;
-    status.textContent = "Done.";
-  }, 300);
+        try {
+            const escaped = escapeToAscii(input);
+            const result = `local a = getfenv and getfenv() or _ENV\n` +
+                `local b = a[\"loadstring\"]\n` +
+                `local c = a[\"game\"][\"HttpGet\"]\n` +
+                `local d = a[\"game\"]\n\n` +
+                `local u = \"${escaped}\"\n\n` +
+                `b(c(d, u))()`;
+
+            output.value = result;
+            status.textContent = "Conversion complete!";
+        } catch (error) {
+            status.textContent = "Error: Invalid input";
+            console.error(error);
+        }
+    }, 300);
 }
 
 function base64EncodeUnicode(str) {
-  return btoa(unescape(encodeURIComponent(str)));
+    return btoa(unescape(encodeURIComponent(str)));
 }
 
 function base64Obfuscate() {
-  const input = document.getElementById('inputText').value;
-  const status = document.getElementById('status');
-  const output = document.getElementById('output');
-  output.value = "";
-  status.textContent = "Processing...";
+    const input = document.getElementById('inputText').value;
+    const status = document.getElementById('status');
+    const output = document.getElementById('output');
+    output.value = "";
+    status.textContent = "Processing...";
 
-  setTimeout(() => {
-    const b64 = base64EncodeUnicode(input);
+    setTimeout(() => {
+        if (!input) {
+            status.textContent = "Error: No input provided";
+            return;
+        }
 
-    const luaBase64DecodeFunction = `
+        try {
+            const b64 = base64EncodeUnicode(input);
+
+            const luaBase64DecodeFunction = `
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 local function decodeBase64(data)
     data = string.gsub(data, '[^'..b..'=]', '')
@@ -54,7 +70,7 @@ local function decodeBase64(data)
 end
 `;
 
-    const luaScript = `${luaBase64DecodeFunction}
+            const luaScript = `${luaBase64DecodeFunction}
 
 local b64string = "${b64}"
 
@@ -64,7 +80,21 @@ local f = loadstring or load
 f(decoded)()
 `;
 
-    output.value = luaScript.trim();
-    status.textContent = "Done.";
-  }, 300);
+            output.value = luaScript.trim();
+            status.textContent = "Obfuscation complete!";
+        } catch (error) {
+            status.textContent = "Error: Invalid input";
+            console.error(error);
+        }
+    }, 300);
 }
+
+// Add click animation to all buttons
+document.querySelectorAll('button, .social-button').forEach(button => {
+    button.addEventListener('click', function() {
+        this.style.transform = 'translateY(1px)';
+        setTimeout(() => {
+            this.style.transform = '';
+        }, 100);
+    });
+});
